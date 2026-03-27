@@ -7,437 +7,683 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <style>
         :root {
-            --content-width: 900px;
-            --page-padding: 2rem;
-            --accent-light: #00aaff;
-            --accent-dark: #4fc3f7;
-            --muted-bg: rgba(0, 0, 0, 0.03);
-        }
+            --content-width: 960px;
+            --page-padding: 1.5rem;
+            --radius: 12px;
+            --transition: 0.3s ease;
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0
-        }
-
-        html, body {
-            height: 100%
-        }
-
-        body {
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            font-size: 1.05rem;
-            color: #ddd;
-            -webkit-font-smoothing: antialiased;
-            transition: background 0.5s ease, color 0.3s ease;
-        }
-
-        /* Global page gradients (only global background now) */
-        body.dark {
-            background: radial-gradient(1000px 500px at 10% 10%, rgba(80, 160, 200, 0.05), transparent 8%),
-            linear-gradient(180deg, #0b0f14 0%, #0f1216 40%, #121318 100%);
-            color: #e6eef6;
+            /* dark theme (default) */
+            --bg: #0f1117;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-card-hover: rgba(255, 255, 255, 0.07);
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #7dd3fc;
+            --border: rgba(255, 255, 255, 0.08);
+            --header-bg: rgba(15, 17, 23, 0.85);
+            --shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
 
         body.light {
-            background: radial-gradient(800px 380px at 80% 10%, rgba(0, 170, 255, 0.04), transparent 8%),
-            linear-gradient(180deg, #f7fbff 0%, #eef6fb 40%, #f4f7f8 100%);
-            color: #222;
+            --bg: #f8fafc;
+            --bg-card: rgba(0, 0, 0, 0.03);
+            --bg-card-hover: rgba(0, 0, 0, 0.06);
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --accent: #0284c7;
+            --accent-hover: #0369a1;
+            --border: rgba(0, 0, 0, 0.08);
+            --header-bg: rgba(248, 250, 252, 0.85);
+            --shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .hidden { display: none !important; }
+
+        /* ---- HEADER ---- */
         header {
             position: sticky;
             top: 0;
-            z-index: 60;
-            backdrop-filter: blur(6px);
-            padding: 0.8rem var(--page-padding);
+            z-index: 100;
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            transition: background var(--transition);
         }
 
         header nav {
             max-width: var(--content-width);
             margin: 0 auto;
+            padding: 0.75rem var(--page-padding);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 1rem;
         }
 
-        .menu a {
-            margin-right: 1rem;
-            font-weight: 600;
+        .logo {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text);
             text-decoration: none;
         }
 
-        .menu a:hover {
-            text-decoration: underline;
+        .logo span {
+            color: var(--accent);
         }
 
-        .lang-buttons {
+        .nav-links {
             display: flex;
-            gap: 0.5rem;
             align-items: center;
+            gap: 1.5rem;
         }
 
-        .lang-buttons button {
-            padding: 0.35rem 0.7rem;
-            border-radius: 6px;
+        .nav-links a {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .nav-controls button {
+            padding: 0.35rem 0.65rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-muted);
             cursor: pointer;
-            border: 1px solid transparent;
-            background: transparent;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all var(--transition);
         }
 
-        body.dark header {
-            color: #ddd
+        .nav-controls button:hover {
+            color: var(--accent);
+            border-color: var(--accent);
         }
 
-        body.light header {
-            color: #222
+        .nav-controls button.active {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: rgba(56, 189, 248, 0.1);
         }
 
-        body.dark .lang-buttons button {
-            border-color: rgba(255, 255, 255, 0.06);
-            color: var(--accent-dark);
-            background: rgba(255, 255, 255, 0.02)
-        }
-
-        body.light .lang-buttons button {
-            border-color: rgba(0, 0, 0, 0.06);
-            color: var(--accent-light);
-            background: rgba(255, 255, 255, 0.6)
+        body.light .nav-controls button.active {
+            background: rgba(2, 132, 199, 0.1);
         }
 
         .theme-toggle {
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            font-size: 1.05rem;
-        }
-
-        /* Sections: no per-section background bands; transparent to show global gradient */
-        section {
-            width: 100%;
-            padding: 0; /* inner padding on .content to avoid margin collapse */
-            box-sizing: border-box;
-            background: transparent;
-        }
-
-        /* Hero / ASCII full-width box at top */
-        #intro {
-            padding: 0; /* ascii box will provide padding */
-        }
-
-        .ascii-fullwidth {
-            width: 100%;
-            padding: 1.2rem var(--page-padding);
-            box-sizing: border-box;
-            background: rgba(0, 0, 0, 0.13); /* subtle frame so the ascii stands out */
-            backdrop-filter: blur(2px);
-        }
-
-        body.dark {
-            background: #222222;
-            color: #e6eef6;
-            border-color: rgba(255, 255, 255, 0.06);
-        }
-
-        body.light {
-            background: #ffffff;
-            color: #111111;
-            border-color: rgba(0, 0, 0, 0.08);
-        }
-
-        .ascii-inner {
-            max-width: none; /* allow ascii to use full available width */
-            overflow: hidden;
-            font-family: "Courier New", Courier, monospace;
-            white-space: pre;
+            font-size: 1rem;
             line-height: 1;
-            font-size: 0.86rem;
-            color: inherit;
-            text-align: center; /* centered horizontally */
         }
 
-        /* constrain text content below ascii in a centered column */
-        .content {
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.4rem;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all var(--transition);
+        }
+
+        /* ---- HERO ---- */
+        .hero {
+            padding: 5rem var(--page-padding) 4rem;
+            text-align: center;
+        }
+
+        .hero-inner {
             max-width: var(--content-width);
             margin: 0 auto;
-            padding: 2.5rem var(--page-padding);
-            color: inherit;
         }
 
-        /* keep headings tidy */
-        h1, h2 {
-            margin-top: 0;
-            margin-bottom: 0.6rem;
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
         }
 
-        /* hidden h1 for accessibility */
-        .sr-only {
-            position: absolute !important;
-            height: 1px;
-            width: 1px;
-            overflow: hidden;
-            clip: rect(1px, 1px, 1px, 1px);
-            white-space: nowrap;
-            border: 0;
-            padding: 0;
-            margin: -1px;
+        .hero h1 span {
+            color: var(--accent);
         }
 
-        p.lead {
-            font-size: 1.08rem;
-            max-width: 80ch;
-            margin-top: 0.4rem;
+        .hero .lead {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--text-muted);
+            max-width: 640px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
         }
 
-        ul {
-            padding-left: 1.4rem;
-            margin-top: 0.5rem
+        .hero .badge {
+            display: inline-block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--accent);
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 0.35rem 1rem;
+            border-radius: 999px;
+            margin-bottom: 1.5rem;
         }
 
-        li {
-            margin-bottom: 0.5rem
+        body.light .hero .badge {
+            background: rgba(2, 132, 199, 0.08);
+            border-color: rgba(2, 132, 199, 0.2);
         }
 
-        footer {
-            padding: 2.5rem var(--page-padding);
-            text-align: center;
-            font-size: 0.95rem;
+        /* ---- SECTIONS ---- */
+        section {
+            padding: 4rem var(--page-padding);
         }
 
-        /* company data styling in contact and legal sections (distinct from labels, not bold) */
-        .contact-label .legal-label {
-            color: inherit;
+        .section-inner {
+            max-width: var(--content-width);
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+        }
+
+        /* ---- CARDS GRID ---- */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: all var(--transition);
+        }
+
+        .card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
             display: block;
-            margin-bottom: 0.2rem;
         }
 
-        .company-data {
-            display: block;
-            font-family: "Courier New", monospace;
-            background: rgba(0, 0, 0, 0.03);
-            padding: 0.45rem 0.6rem;
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* ---- CLIENT TAGS ---- */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.85rem 1.25rem;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all var(--transition);
+        }
+
+        .tag:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-1px);
+        }
+
+        .tag-icon {
+            font-size: 1.2rem;
+        }
+
+        /* ---- CONTACT ---- */
+        .contact-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 480px;
+        }
+
+        .contact-box .label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-box .email-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-box a {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        .copy-btn {
+            padding: 0.3rem 0.7rem;
             border-radius: 6px;
-            color: inherit;
-            margin-bottom: 0.6rem;
-            max-width: 600px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            transition: all var(--transition);
         }
 
-        body.light .company-data {
-            background: rgba(0, 0, 0, 0.03);
+        .copy-btn:hover {
+            color: var(--accent);
+            border-color: var(--accent);
         }
 
-        body.dark .company-data {
-            background: rgba(255, 255, 255, 0.02);
+        /* ---- LEGAL ---- */
+        .legal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.25rem;
         }
 
-        @media (max-width: 720px) {
-            .ascii-inner {
-                font-size: 0.68rem;
+        .legal-item .label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .legal-item .value {
+            font-size: 0.95rem;
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+            color: var(--text);
+        }
+
+        /* ---- FOOTER ---- */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem var(--page-padding);
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ---- MOBILE ---- */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
             }
 
-            header nav {
-                padding: 0;
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--header-bg);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-bottom: 1px solid var(--border);
+                flex-direction: column;
+                padding: 1rem var(--page-padding) 1.25rem;
+                gap: 0.75rem;
+            }
+
+            .nav-links.open {
+                display: flex;
+            }
+
+            .nav-links a {
+                font-size: 1rem;
+                padding: 0.3rem 0;
+            }
+
+            .hero {
+                padding: 3.5rem var(--page-padding) 3rem;
+            }
+
+            section {
+                padding: 3rem var(--page-padding);
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .legal-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .contact-box {
+                padding: 1.5rem;
             }
         }
 
-        .hidden {
-            display: none !important;
+        @media (max-width: 400px) {
+            .legal-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-<body class="dark">
+<body>
+
 <header>
     <nav>
-        <div class="menu">
-            <a href="#services" class="lang-en">Services</a>
-            <a href="#services" class="lang-hu hidden">Szolgáltatások</a>
-            <a href="#clients" class="lang-en">Clients</a>
-            <a href="#clients" class="lang-hu hidden">Ügyfelek</a>
-            <a href="#contact" class="lang-en">Contact</a>
-            <a href="#contact" class="lang-hu hidden">Kapcsolat</a>
-            <a href="#legal" class="lang-en">Legal</a>
-            <a href="#legal" class="lang-hu hidden">Jogi információk</a>
+        <a href="#" class="logo"><span>Rest</span> <span class="lang-en">Informatics</span><span class="lang-hu hidden">Informatika</span></a>
+
+        <button class="hamburger" onclick="toggleMenu()" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+
+        <div class="nav-links" id="nav-links">
+            <a href="#services" class="lang-en" onclick="closeMenu()">Services</a>
+            <a href="#services" class="lang-hu hidden" onclick="closeMenu()">Szolgáltatások</a>
+            <a href="#clients" class="lang-en" onclick="closeMenu()">Clients</a>
+            <a href="#clients" class="lang-hu hidden" onclick="closeMenu()">Ügyfelek</a>
+            <a href="#contact" class="lang-en" onclick="closeMenu()">Contact</a>
+            <a href="#contact" class="lang-hu hidden" onclick="closeMenu()">Kapcsolat</a>
+            <a href="#legal" class="lang-en" onclick="closeMenu()">Legal</a>
+            <a href="#legal" class="lang-hu hidden" onclick="closeMenu()">Jogi adatok</a>
         </div>
 
-        <div class="lang-buttons">
-            <button onclick="switchLang('en')">EN</button>
-            <button onclick="switchLang('hu')">HU</button>
-            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><span
-                    id="theme-icon">🌙</span></button>
+        <div class="nav-controls">
+            <button id="btn-en" class="active" onclick="switchLang('en')">EN</button>
+            <button id="btn-hu" onclick="switchLang('hu')">HU</button>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><span id="theme-icon">&#9789;</span></button>
         </div>
     </nav>
 </header>
 
-<!-- ASCII art full-width box -->
-<section id="intro" aria-label="Hero">
-    <div class="ascii-fullwidth">
-        <!-- Hungarian ASCII art (HU) -->
-        <div class="ascii-inner lang-hu hidden" aria-hidden="true">
-            ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____
-            ||R |||e |||s |||t |||       |||I |||n |||f |||o |||r |||m |||a |||t |||i |||k |||a |||       |||K |||f |||t |||. ||
-            ||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
-            |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
-        </div>
+<!-- HERO -->
+<section class="hero" id="intro" aria-label="Hero">
+    <div class="hero-inner">
+        <div class="badge lang-en">Est. 2011</div>
+        <div class="badge lang-hu hidden">Alapítva 2011</div>
 
-        <!-- English ASCII art (EN) -->
-        <div class="ascii-inner lang-en" aria-hidden="true">
-            ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____
-            ||R |||e |||s |||t |||       |||I |||n |||f |||o |||r |||m |||a |||t |||i |||c |||s |||       |||L |||t |||d |||. ||
-            ||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
-            |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
-        </div>
-    </div>
+        <h1>
+            <span class="lang-en">Rest <span>Informatics</span> Ltd.</span>
+            <span class="lang-hu hidden">Rest <span>Informatika</span> Kft.</span>
+        </h1>
 
-    <!-- optional short content under ascii -->
-    <div class="content">
-        <!-- hidden real <h1> for accessibility -->
-        <h1 class="sr-only">Rest Informatics Ltd.</h1>
-
-        <p class="lead lang-en">Software design, development and consultancy focused on cloud & backend systems,
-            algorithm development and scientific computing. Founded in 2011.</p>
-        <p class="lead lang-hu hidden">Szoftvertervezés, fejlesztés és tanácsadás felhő- és backend rendszerekhez,
-            algoritmusfejlesztéshez és tudományos számításokhoz. 2011-ben alapítva.</p>
+        <p class="lead lang-en">Software design, development and consultancy focused on cloud &amp; backend systems, algorithm development and scientific computing.</p>
+        <p class="lead lang-hu hidden">Szoftvertervezés, fejlesztés és tanácsadás felhő- és backend rendszerekhez, algoritmusfejlesztéshez és tudományos számításokhoz.</p>
     </div>
 </section>
 
+<!-- SERVICES -->
 <section id="services">
-    <div class="content">
+    <div class="section-inner">
         <h2 class="lang-en">Services</h2>
         <h2 class="lang-hu hidden">Szolgáltatások</h2>
-        <ul class="lang-en">
-            <li>Software architecture consultancy</li>
-            <li>Backend and cloud development</li>
-            <li>Algorithm development</li>
-            <li>Scientific computing</li>
-            <li>Team leadership and project management</li>
-        </ul>
-        <ul class="lang-hu hidden">
-            <li>Szoftverarchitektúra tanácsadás</li>
-            <li>Backend és felhő fejlesztés</li>
-            <li>Algoritmusfejlesztés</li>
-            <li>Tudományos számítások</li>
-            <li>Csapatvezetés és projektmenedzsment</li>
-        </ul>
+
+        <div class="cards lang-en">
+            <div class="card">
+                <span class="card-icon">&#9670;</span>
+                <h3>Software architecture consultancy</h3>
+            </div>
+            <div class="card">
+                <span class="card-icon">&#9729;</span>
+                <h3>Backend and cloud development</h3>
+            </div>
+            <div class="card">
+                <span class="card-icon">&#10023;</span>
+                <h3>Algorithm development</h3>
+            </div>
+            <div class="card">
+                <span class="card-icon">&#9883;</span>
+                <h3>Scientific computing</h3>
+            </div>
+            <div class="card">
+                <span class="card-icon">&#9654;</span>
+                <h3>Team leadership and project management</h3>
+            </div>
+        </div>
+
+        <div class="cards lang-hu hidden">
+            <div class="card">
+                <span class="card-icon">&#9670;</span>
+                <h3>Szoftverarchitektúra tanácsadás</h3>
+            </div>
+            <div class="card">
+                <span class="card-icon">&#9729;</span>
+                <h3>Backend és felhő fejlesztés</h3>
+            </div>
+            <div class="card">
+                <span class="card-icon">&#10023;</span>
+                <h3>Algoritmusfejlesztés</h3>
+            </div>
+            <div class="card">
+                <span class="card-icon">&#9883;</span>
+                <h3>Tudományos számítások</h3>
+            </div>
+            <div class="card">
+                <span class="card-icon">&#9654;</span>
+                <h3>Csapatvezetés és projektmenedzsment</h3>
+            </div>
+        </div>
     </div>
 </section>
 
+<!-- CLIENTS -->
 <section id="clients">
-    <div class="content">
+    <div class="section-inner">
         <h2 class="lang-en">Client Industries</h2>
         <h2 class="lang-hu hidden">Ügyfél iparágak</h2>
-        <ul class="lang-en">
-            <li>Biotechnology</li>
-            <li>Simulation &amp; modeling</li>
-            <li>Telecommunications</li>
-        </ul>
-        <ul class="lang-hu hidden">
-            <li>Biotechnológia</li>
-            <li>Szimuláció &amp; modellezés</li>
-            <li>Telekommunikáció</li>
-        </ul>
+
+        <div class="tags lang-en">
+            <div class="tag"><span class="tag-icon">&#9862;</span> Biotechnology</div>
+            <div class="tag"><span class="tag-icon">&#8967;</span> Simulation &amp; modeling</div>
+            <div class="tag"><span class="tag-icon">&#9888;</span> Telecommunications</div>
+        </div>
+
+        <div class="tags lang-hu hidden">
+            <div class="tag"><span class="tag-icon">&#9862;</span> Biotechnológia</div>
+            <div class="tag"><span class="tag-icon">&#8967;</span> Szimuláció &amp; modellezés</div>
+            <div class="tag"><span class="tag-icon">&#9888;</span> Telekommunikáció</div>
+        </div>
     </div>
 </section>
 
+<!-- CONTACT -->
 <section id="contact">
-    <div class="content">
+    <div class="section-inner">
         <h2 class="lang-en">Contact</h2>
         <h2 class="lang-hu hidden">Kapcsolat</h2>
 
-        <span class="contact-label">E-mail</span>
-        <span class="company-data"><span id="email-anchor"></span></span>
+        <div class="contact-box">
+            <div class="label">E-mail</div>
+            <div class="email-row">
+                <a href="#" id="email-anchor"></a>
+                <button class="copy-btn" id="copy-email" type="button">Copy</button>
+            </div>
+        </div>
     </div>
 </section>
 
+<!-- LEGAL -->
 <section id="legal">
-    <div class="content">
+    <div class="section-inner">
         <h2 class="lang-en">Legal Information</h2>
         <h2 class="lang-hu hidden">Jogi információk</h2>
 
-        <!-- English labels/data -->
-        <span class="legal-label lang-en">Company</span>
-        <span class="company-data lang-en">Rest Informatics Ltd.</span>
+        <div class="legal-grid lang-en">
+            <div class="legal-item">
+                <div class="label">Company</div>
+                <div class="value">Rest Informatics Ltd.</div>
+            </div>
+            <div class="legal-item">
+                <div class="label">Tax Number</div>
+                <div class="value">23532304-2-13</div>
+            </div>
+            <div class="legal-item">
+                <div class="label">Registration No.</div>
+                <div class="value">13 09 150480</div>
+            </div>
+            <div class="legal-item">
+                <div class="label">Address</div>
+                <div class="value">Pacsirta street 2, 2626 Nagymaros, Hungary</div>
+            </div>
+        </div>
 
-        <span class="legal-label lang-en">Tax Number</span>
-        <span class="company-data lang-en">23532304-2-13</span>
-
-        <span class="legal-label lang-en">Company registration number</span>
-        <span class="company-data lang-en">13 09 150480</span>
-
-        <span class="legal-label lang-en">Address</span>
-        <span class="company-data lang-en">Pacsirta street 2, 2626 Nagymaros, Hungary</span>
-
-        <!-- Hungarian labels/data -->
-        <span class="legal-label lang-hu hidden">Cég</span>
-        <span class="company-data lang-hu hidden">Rest Informatika Kft.</span>
-
-        <span class="legal-label lang-hu hidden">Adószám</span>
-        <span class="company-data lang-hu hidden">23532304-2-13</span>
-
-        <span class="legal-label lang-hu hidden">Cégjegyzékszám</span>
-        <span class="company-data lang-hu hidden">13 09 150480</span>
-
-        <span class="legal-label lang-hu hidden">Cím</span>
-        <span class="company-data lang-hu hidden">2626 Nagymaros, Pacsirta utca 2, Magyarország</span>
+        <div class="legal-grid lang-hu hidden">
+            <div class="legal-item">
+                <div class="label">Cég</div>
+                <div class="value">Rest Informatika Kft.</div>
+            </div>
+            <div class="legal-item">
+                <div class="label">Adószám</div>
+                <div class="value">23532304-2-13</div>
+            </div>
+            <div class="legal-item">
+                <div class="label">Cégjegyzékszám</div>
+                <div class="value">13 09 150480</div>
+            </div>
+            <div class="legal-item">
+                <div class="label">Cím</div>
+                <div class="value">2626 Nagymaros, Pacsirta utca 2, Magyarország</div>
+            </div>
+        </div>
     </div>
 </section>
 
 <footer>
-    <div class="content">
-        <p class="lang-en">&copy; 2011–2025 Rest Informatics Ltd.</p>
-        <p class="lang-hu hidden">&copy; 2011–2025 Rest Informatika Kft.</p>
+    <div>
+        <p class="lang-en">&copy; 2011&ndash;2026 Rest Informatics Ltd.</p>
+        <p class="lang-hu hidden">&copy; 2011&ndash;2026 Rest Informatika Kft.</p>
     </div>
 </footer>
 
 <script>
     /* Language switching */
     function switchLang(lang) {
-        document.querySelectorAll('.lang-en').forEach(e => e.classList.add('hidden'));
-        document.querySelectorAll('.lang-hu').forEach(e => e.classList.add('hidden'));
-        document.querySelectorAll('.lang-' + lang).forEach(e => e.classList.remove('hidden'));
+        document.querySelectorAll('.lang-en').forEach(function(e) { e.classList.add('hidden'); });
+        document.querySelectorAll('.lang-hu').forEach(function(e) { e.classList.add('hidden'); });
+        document.querySelectorAll('.lang-' + lang).forEach(function(e) { e.classList.remove('hidden'); });
+        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+        document.getElementById('btn-hu').classList.toggle('active', lang === 'hu');
     }
 
     /* Theme toggle */
     function toggleTheme() {
-        document.body.classList.toggle('dark');
         document.body.classList.toggle('light');
-        const icon = document.getElementById('theme-icon');
-        if (document.body.classList.contains('dark')) icon.textContent = '🌙';
-        else icon.textContent = '☀️';
+        var icon = document.getElementById('theme-icon');
+        icon.textContent = document.body.classList.contains('light') ? '\u2600' : '\u263D';
     }
 
-    /* Email obfuscation: single anchor + single copy button */
+    /* Mobile menu */
+    function toggleMenu() {
+        document.getElementById('nav-links').classList.toggle('open');
+    }
+
+    function closeMenu() {
+        document.getElementById('nav-links').classList.remove('open');
+    }
+
+    /* Email obfuscation */
     (function insertEmail() {
         try {
-            const user = 'rest';
-            const domain = 'rest.hu';
-            const addr = user + '@' + domain;
-            const anchor = document.getElementById('email-anchor');
+            var user = 'rest';
+            var domain = 'rest.hu';
+            var addr = user + '@' + domain;
+            var anchor = document.getElementById('email-anchor');
             if (anchor) {
                 anchor.href = 'mailto:' + addr;
                 anchor.textContent = addr;
             }
-            const copyBtn = document.getElementById('copy-email');
+            var copyBtn = document.getElementById('copy-email');
             if (copyBtn) {
-                copyBtn.addEventListener('click', async () => {
+                copyBtn.addEventListener('click', function() {
                     if (navigator.clipboard && navigator.clipboard.writeText) {
-                        try {
-                            await navigator.clipboard.writeText(addr);
-                            const old = copyBtn.textContent;
-                            copyBtn.textContent = 'Copied';
-                            setTimeout(() => copyBtn.textContent = old, 1200);
-                        } catch (e) {
-                            fallbackPrompt();
-                        }
-                    } else fallbackPrompt();
-
-                    function fallbackPrompt() {
+                        navigator.clipboard.writeText(addr).then(function() {
+                            var old = copyBtn.textContent;
+                            copyBtn.textContent = 'Copied!';
+                            setTimeout(function() { copyBtn.textContent = old; }, 1200);
+                        }).catch(function() {
+                            window.prompt('Copy this email:', addr);
+                        });
+                    } else {
                         window.prompt('Copy this email:', addr);
                     }
                 });
             }
         } catch (e) {
-            const anchor = document.getElementById('email-anchor');
+            var anchor = document.getElementById('email-anchor');
             if (anchor && !anchor.textContent) anchor.textContent = 'rest@rest.hu';
         }
     })();
